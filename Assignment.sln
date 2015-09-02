@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
 VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Assignment", "Assignment.pyproj", "{96B0A6E8-55E4-4A0B-A7A1-2F238E1BEAC4}"
-EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "receiver", "receiver\receiver.pyproj", "{52D24AFE-CC06-4F2C-9812-17CF0878CB12}"
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "channel", "channel\channel.pyproj", "{F65F2F8E-3008-4BBB-A7EE-ED29FED29DBF}"
@@ -17,8 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{96B0A6E8-55E4-4A0B-A7A1-2F238E1BEAC4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{96B0A6E8-55E4-4A0B-A7A1-2F238E1BEAC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52D24AFE-CC06-4F2C-9812-17CF0878CB12}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{52D24AFE-CC06-4F2C-9812-17CF0878CB12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F65F2F8E-3008-4BBB-A7EE-ED29FED29DBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
