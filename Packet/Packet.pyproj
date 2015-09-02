@@ -3,15 +3,15 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>f65f2f8e-3008-4bbb-a7ee-ed29fed29dbf</ProjectGuid>
+    <ProjectGuid>23b3ac06-fdd7-42bd-a6f9-c32831db3dea</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>channel.py</StartupFile>
+    <StartupFile>Packet.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
-    <Name>channel</Name>
-    <RootNamespace>channel</RootNamespace>
+    <Name>Packet</Name>
+    <RootNamespace>Packet</RootNamespace>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -22,14 +22,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="channel.py" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Packet\Packet.pyproj">
-      <Name>Packet</Name>
-      <Project>{23b3ac06-fdd7-42bd-a6f9-c32831db3dea}</Project>
-      <Private>True</Private>
-    </ProjectReference>
+    <Compile Include="Packet.py" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

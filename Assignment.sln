@@ -9,6 +9,8 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "channel", "channel\channel.
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "sender", "sender\sender.pyproj", "{D3FFC68C-4739-4791-9A2C-4AEEA4EFB289}"
 EndProject
+Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Packet", "Packet\Packet.pyproj", "{23B3AC06-FDD7-42BD-A6F9-C32831DB3DEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,8 @@ Global
 		{F65F2F8E-3008-4BBB-A7EE-ED29FED29DBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D3FFC68C-4739-4791-9A2C-4AEEA4EFB289}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D3FFC68C-4739-4791-9A2C-4AEEA4EFB289}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23B3AC06-FDD7-42BD-A6F9-C32831DB3DEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23B3AC06-FDD7-42BD-A6F9-C32831DB3DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
