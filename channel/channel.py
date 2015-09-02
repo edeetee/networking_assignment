@@ -8,12 +8,10 @@ HOST = socket.gethostname()
 class Channel_Socket:
     #generic definition for channel socket
     def __init__(self, port):
-        self.port = port
+        self.port = int(port)
 
     def setup(self):
-        port = int(port)
-
-        if not (1024 <= port and port <= 64000):
+        if not (1024 <= self.port and self.port <= 64000):
             raise BaseException("Invalid Port")
 
         self.socket = socket.socket()
@@ -28,7 +26,7 @@ class In_Channel_Socket(Channel_Socket):
 
     def transfer(self, P):
         data = self.socket.recv(1024)
-        if(data and random() > P):
+        if(data and random() >= P):
             self.socket_out.transfer(data)
 
 
@@ -39,8 +37,8 @@ class Out_Channel_Socket(Channel_Socket):
         super().__init__(port)
 
     def setup(self):
-        self.socket.connect((HOST, self.port_to))
         super().setup()
+        self.socket.connect((HOST, self.port_to))
 
     def transfer(self, data):
         self.socket.send(data)
@@ -48,11 +46,16 @@ class Out_Channel_Socket(Channel_Socket):
 
 def main():
 
-    if not ( len(argv) > len(set(argv)) ):
+    if ( len(argv) > len(set(argv)) ):
         raise BaseException("Overlapping Ports")
 
-    cs_in_port, cs_out_port, cr_in_port, cr_out_port = argv[1,5]
-    s_in, r_in, P = argv[5:]
+    for i in range(1, 7):
+        argv[i] = int(argv[i][:-1])
+
+    cs_in_port, cs_out_port, cr_in_port, cr_out_port = argv[1:5]
+
+    s_in, r_in = argv[5:7]
+    P = float(argv[7])
     
     cs_out = Out_Channel_Socket(cs_out_port, s_in)
     cs_in = In_Channel_Socket(cs_in_port, cs_out)
@@ -63,8 +66,8 @@ def main():
         channel_socket.setup()
 
     while True:
+        print("Waiting...")
         read_sockets = select([cr_in.socket, cs_in.socket], [], [])[0]
-
         cr_in.transfer(P)
         cs_in.transfer(P)
 
