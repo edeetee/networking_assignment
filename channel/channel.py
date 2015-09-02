@@ -8,11 +8,11 @@ HOST = socket.gethostname()
 class Channel_Socket:
     #generic definition for channel socket
     def __init__(self, port):
+        if not (1024 <= port and port <= 64000):
+            raise BaseException("Invalid Port")
         self.port = int(port)
 
     def setup(self):
-        if not (1024 <= self.port and self.port <= 64000):
-            raise BaseException("Invalid Port")
 
         self.socket = socket.socket()
         self.socket.bind((HOST, self.port))
@@ -46,15 +46,16 @@ class Out_Channel_Socket(Channel_Socket):
 
 def main():
 
-    if ( len(argv) > len(set(argv)) ):
+    ports = argv[1:7]
+
+    if ( len(ports) > len(set(ports)) ):
         raise BaseException("Overlapping Ports")
 
-    for i in range(1, 7):
-        argv[i] = int(argv[i][:-1])
+    for port in ports:
+        port = int(port)
 
-    cs_in_port, cs_out_port, cr_in_port, cr_out_port = argv[1:5]
-
-    s_in, r_in = argv[5:7]
+    cs_in_port, cs_out_port, cr_in_port, cr_out_port = ports[0:4]
+    s_in, r_in = ports[4:6]
     P = float(argv[7])
     
     cs_out = Out_Channel_Socket(cs_out_port, s_in)

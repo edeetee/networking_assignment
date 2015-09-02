@@ -1,4 +1,4 @@
-class PacketTypes:
+﻿class PacketTypes:
     dataPacket = "dataPacket"
     acknowledgementPacket = "acknowledgementPacket"
 
