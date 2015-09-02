@@ -24,10 +24,10 @@ class In_Receiver_Socket(Receiver_Socket):
     def __init__(self, port):
         super().__init__(port)
         
-    def transfer(self, P):
-        data = self.socket.recv(1024)
-        if data:
-            self.socket_out.transfer(data)    
+    #def transfer(self, P):
+        #data = self.socket.recv(1024)
+        #if data:
+            #self.socket_out.transfer(data)    
         
 
 class Out_Receiver_Socket(Receiver_Socket):
@@ -65,7 +65,26 @@ def main():
     expected = 0
 
     while True:
+        
+        #wait for incoming packet
+        if Packet.magicno != "0x497E":
+            raise BaseException("Incorrect Magicno")
+        if Packet.type != "dataPacket":
+            raise BaseException("Incorrect Packet Type")
+        if Packet.seqno != expected:
+            Packet("acknowledgementPacket", rcvd,seqno,0,[])
+            #send that packet
+        elif Packet.seqno == expected:
+            Packet("acknowledgementPacket", rcvd,seqno,0,[])
+            #send that packet
+            expected = 1 - expected
+            if Packet.dataLen > 0:
+                "{}.txt".format(filename).write(Packet.data)
+            elif Packet.dataLen == 0:
+                "{}.txt".format(filename).close()
+                # Then close all sockets & Exit program
+            
 
 
 
-main()    
+main()
