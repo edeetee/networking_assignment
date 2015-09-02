@@ -2,20 +2,42 @@ import Packet
 from sys import argv
 import socket
 
-def valid_port(port):
-    if not (1024 <= port and port <= 64000):
-        raise Exception("Invalid Port")
+HOST = socket.gethostname()
+
+class Channel_Socket:
+    port = 0
+
+    def __init__(self):
+        self.type = type
+        
+
+    def setup(self):
+        if not (1024 < port and port < 64000):
+            raise BaseException("Invalid Port")
+
+        self.socket = socket.socket()
+        self.socket.bind((HOST, self.port))
+
 
 
 
 def main():
-    host = socket.gethostname()
+    cs_in = Channel_Socket()
+    cs_out = Channel_Socket()
+    cr_in = Channel_Socket()
+    cr_out = Channel_Socket()
 
-    cs_in, cs_out, cr_in, cr_out, s_in, r_in, P = argv[1:]
+    if not ( len(argv) > len(set(argv)) ):
+        raise BaseException("Overlapping Ports")
 
-    for port in [cs_in, cs_out, cr_in, cr_out]: valid_port(port)
+    cs_in.port, cs_out.port, cr_in.port, cr_out.port, 
+    s_in, r_in, P = argv[1:]
 
-    cs_in_socket = 
+    for channel_socket in [cs_in, cs_out, cr_in, cr_out]: channel_socket.setup(s_in, r_in)
+
+    cs_out.socket.connect((HOST, s_in))
+    cr_out.socket.connect((HOST, r_in))
+
 
     
 
