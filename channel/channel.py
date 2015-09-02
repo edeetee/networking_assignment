@@ -1,45 +1,72 @@
-import Packet
 from sys import argv
 import socket
+from select import select
+from random import random
 
 HOST = socket.gethostname()
 
 class Channel_Socket:
-    port = 0
-
-    def __init__(self):
-        self.type = type
-        
+    #generic definition for channel socket
+    def __init__(self, port):
+        self.port = port
 
     def setup(self):
-        if not (1024 < port and port < 64000):
+        port = int(port)
+
+        if not (1024 <= port and port <= 64000):
             raise BaseException("Invalid Port")
 
         self.socket = socket.socket()
         self.socket.bind((HOST, self.port))
 
 
+class In_Channel_Socket(Channel_Socket):
+    #definition for incoming port
+    def __init__(self, port, socket_out):
+        self.socket_out = socket_out
+        super().__init__(port)
+
+    def transfer(self, P):
+        data = self.socket.recv(1024)
+        if(data and random() > P):
+            self.socket_out.transfer(data)
+
+
+class Out_Channel_Socket(Channel_Socket):
+    #definition for outgoing port
+    def __init__(self, port, port_to):
+        self.port_to = port_to
+        super().__init__(port)
+
+    def setup(self):
+        self.socket.connect((HOST, self.port_to))
+        super().setup()
+
+    def transfer(self, data):
+        self.socket.send(data)
 
 
 def main():
-    cs_in = Channel_Socket()
-    cs_out = Channel_Socket()
-    cr_in = Channel_Socket()
-    cr_out = Channel_Socket()
 
     if not ( len(argv) > len(set(argv)) ):
         raise BaseException("Overlapping Ports")
 
-    cs_in.port, cs_out.port, cr_in.port, cr_out.port, 
-    s_in, r_in, P = argv[1:]
-
-    for channel_socket in [cs_in, cs_out, cr_in, cr_out]: channel_socket.setup(s_in, r_in)
-
-    cs_out.socket.connect((HOST, s_in))
-    cr_out.socket.connect((HOST, r_in))
-
-
+    cs_in_port, cs_out_port, cr_in_port, cr_out_port = argv[1,5]
+    s_in, r_in, P = argv[5:]
     
+    cs_out = Out_Channel_Socket(cs_out_port, s_in)
+    cs_in = In_Channel_Socket(cs_in_port, cs_out)
+    cr_out = Out_Channel_Socket(cr_out_port, r_in)
+    cr_in = In_Channel_Socket(cr_in_port, cr_out)
+
+    for channel_socket in [cs_in, cs_out, cr_in, cr_out]: 
+        channel_socket.setup()
+
+    while True:
+        read_sockets = select([cr_in.socket, cs_in.socket], [], [])[0]
+
+        cr_in.transfer(P)
+        cs_in.transfer(P)
 
 
 main()
