@@ -48,7 +48,7 @@ def main():
 
     ports = argv[1:7]
 
-    if ( len(ports) > len(set(ports)) ):
+    if len(ports) > len(set(ports)):
         raise BaseException("Overlapping Ports")
 
     for port in ports:

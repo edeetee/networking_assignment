@@ -14,6 +14,16 @@ def setup_socket(port):
     cur_socket.bind((HOST, self.port))
     return cur_socket
 
+def make_packet(bytes):
+    n = len(bytes)
+
+    if n == 0:
+        return Packet(PacketTypes.dataPacket, "next", 0, []), True
+        
+    if 0 < len(bytes):
+
+        return THIS, False
+
 def main():
 
     ports = argv[1:4]
@@ -40,17 +50,11 @@ def main():
     next = 0
     exitFlag = False
 
-    io
-
     file = open(filename, mode="rb")
 
     while True:
         bytes = file.read(512)
+        packet, exitFlag = make_packet(bytes)
 
-        data_packet = Packet(PacketTypes.dataPacket, "next", 0, [])
-        exitFlag = True
-        
-        if 0 < len(bytes):
-            pass
 
 main()
