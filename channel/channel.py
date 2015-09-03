@@ -70,9 +70,9 @@ def main():
     s_in, r_in = ports[4:6]
     P = float(args[7])
     
-    cs_out = Out_Channel_Socket(cs_out_port, s_in)
+    cs_out = Out_Channel_Socket(cs_out_port, r_in)
     cs_in = In_Channel_Socket(cs_in_port, cs_out)
-    cr_out = Out_Channel_Socket(cr_out_port, r_in)
+    cr_out = Out_Channel_Socket(cr_out_port, s_in)
     cr_in = In_Channel_Socket(cr_in_port, cr_out)
 
     for channel_socket in [cs_in, cs_out, cr_in, cr_out]: 
@@ -81,7 +81,7 @@ def main():
     while True:
         print("Waiting...")
         read_sockets = select([cr_in.socket, cs_in.socket], [], [])[0]
-        print("Received {0}", read_sockets)
+        print("Received", read_sockets)
         for in_sock in [cr_in, cs_in]:
             if in_sock.socket in read_sockets:
                 in_sock.transfer(P)

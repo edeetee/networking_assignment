@@ -68,19 +68,22 @@ def main():
         while True:
             s_out.send(pickled)
             
-            conn, addr = s_in.accept()
+            try:
+                conn, addr = s_in.accept()
+            except:
+                continue
 
-            if conn:
-                resp_pickled = conn.recv(1024)
-                resp = pickle.loads(resp_pickled)
+            resp_pickled = conn.recv(1024)
+            resp = pickle.loads(resp_pickled)
 
-                if (resp.magicno == 0x497E and 
-                   resp.type == PacketTypes.acknowledgementPacket and
-                   resp.dataLen == 0 and
-                   resp.next == next):
-                    next += 1
-                    break
-                conn.close()
+            if (resp.magicno == 0x497E and 
+                resp.type == PacketTypes.acknowledgementPacket and
+                resp.dataLen == 0 and
+                resp.next == next):
+                next += 1
+                break
+            print('close')
+            conn.close()
 
     s_out.close()
     file.close()
