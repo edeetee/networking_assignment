@@ -1,4 +1,4 @@
-import Packet
+from Packet import *
 from sys import argv
 from select import select
 import os.path
@@ -7,50 +7,20 @@ import socket
 
 HOST = socket.gethostname()
 
-class Receiver_Socket:
-
-    def __init__(self,port):
-        self.port = int(port)
-
-    def setup(self):
-        if (1024 > self.port or self.port > 64000):
+def setup_socket(port):
+    if not (1024 <= port and port <= 64000):
             raise BaseException("Invalid Port")
 
-        self.socket = socket.socket()
-        self.socket.bind((HOST, self.port))
-        
-class In_Receiver_Socket(Receiver_Socket):
-    #definition for incoming port
-    def __init__(self, port):
-        super().__init__(port)
-
-    def setup(self):
-        super().setup()
-        self.socket.listen(5)
-
-        
-
-class Out_Receiver_Socket(Receiver_Socket):
-    first_time = True
-    #definition for outgoing port
-    def __init__(self, port, port_to):
-        self.port_to = port_to
-        super().__init__(port)
-
-    def setup(self):
-        super().setup()
-
-    def send(self, data):
-        if first_time:
-            self.socket.connect((HOST, self.port_to))
-        self.socket.send(data)
+    cur_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    cur_socket.bind((HOST, port))
+    return cur_socket
 
         
 def main():
     
     args = argv
     if len(args) < 4:
-        args = [6001,6002,5003,'test']
+        args = [6001,6002,5003,'to_send.txt']
     
     if  (len(args) > len(set(args)) ):
         raise BaseException("Overlapping Ports")
@@ -60,50 +30,51 @@ def main():
     cr_in = args[2]
     filename = args[3]
     
-    r_out = Out_Receiver_Socket(r_out, cr_in)
-    r_in = In_Receiver_Socket(r_in)
+    r_out = setup_socket(r_out)
+    r_in = setup_socket(r_in)
+
+    r_out.connect((HOST, cr_in))
+
+    file = None
     
-    for channel_socket in [r_out, r_in]: 
-        channel_socket.setup()
-    
-    if not os.path.exists("dir/{}.txt".format(filename)):
-        open("{}.txt".format(filename), "w")
+    if os.path.isfile(filename):
+        if len(argv) < 5:
+            os.remove(filename)
+            file = open(filename, "wb")
+        else:
+            raise BaseException("File Already Exists")
     else:
-        raise BaseException("File Already Exists")
+        file = open(filename, "wb")
     
     expected = 0
-    finished = False
+    first_time = True
 
-    while not finished:
-        
-        conn, addr = r_in.socket.accept()
+    while True:
+        data, addr = r_in.recvfrom(1024)
 
-        received_packet = pickle.loads(conn.recv(1024))
+        rcvd = pickle.loads(data)
             
-        if received_packet.magicno != 0x497E:
-            raise BaseException("Incorrect Magicno")
-            
-        if received_packet.type != "dataPacket":
-            raise BaseException("Incorrect Packet Type")
-            
-        if received_packet.seqno != expected:
-            packet = Packet("acknowledgementPacket", rcvd,seqno,0,[])
+        if (rcvd.magicno == 0x497E and
+            rcvd.type == PacketTypes.dataPacket):
+
+            packet = Packet(PacketTypes.acknowledgementPacket, rcvd.seqno, 0, [])
             pickled = pickle.dumps(packet)
+
+            if first_time:
+                first_time = False
+
             r_out.send(pickled)
-        else:
-            packet = Packet("acknowledgementPacket", rcvd,seqno,0,[])
-            pickled = pickle.dumps(packet)
-            r_out.send(pickled)
-            expected = 1 - expected
+
+            if rcvd.seqno == expected:
+                expected = 1 - expected
                 
-            if received_packet.dataLen > 0:
-                "{}.txt".format(filename).write(received_packet.data)
-            elif received_packet.dataLen == 0:
-                "{}.txt".format(filename).close()
-                # Then close all sockets & Exit program
-                r_in.close
-                r_out.close
-                finished = True
+                if rcvd.dataLen > 0:
+                    file.write(rcvd.data)
+                else:
+                    file.close()
+                    # Then close all sockets & Exit program
+                    r_out.close()
+                    break
                 
 
 
