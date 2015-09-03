@@ -1,6 +1,8 @@
 import Packet
 from sys import argv
 from select import select
+import os.path
+import pickle
 import socket
 
 HOST = socket.gethostname()
@@ -23,11 +25,7 @@ class In_Receiver_Socket(Receiver_Socket):
     #definition for incoming port
     def __init__(self, port):
         super().__init__(port)
-        
-    #def transfer(self, P):
-        #data = self.socket.recv(1024)
-        #if data:
-            #self.socket_out.transfer(data)    
+
         
 
 class Out_Receiver_Socket(Receiver_Socket):
@@ -42,6 +40,9 @@ class Out_Receiver_Socket(Receiver_Socket):
 
         
 def main():
+    
+    if len(argv) < 4:
+        argv = [6001,6002,5003,'test']
     
     if not ( len(argv) > len(set(argv)) ):
         raise BaseException("Overlapping Ports")
@@ -63,28 +64,39 @@ def main():
         raise BaseException("File Already Exists")
     
     expected = 0
+    finished = False
 
-    while True:
+    while not finished:
         
         #wait for incoming packet
-        if Packet.magicno != "0x497E":
-            raise BaseException("Incorrect Magicno")
-        if Packet.type != "dataPacket":
-            raise BaseException("Incorrect Packet Type")
-        if Packet.seqno != expected:
-            Packet("acknowledgementPacket", rcvd,seqno,0,[])
-            #send that packet
-        elif Packet.seqno == expected:
-            Packet("acknowledgementPacket", rcvd,seqno,0,[])
-            #send that packet
-            expected = 1 - expected
-            if Packet.dataLen > 0:
-                "{}.txt".format(filename).write(Packet.data)
-            elif Packet.dataLen == 0:
-                "{}.txt".format(filename).close()
-                # Then close all sockets & Exit program
+        if len(select([r_in],[],[])[0]) == 1:
+            received_packet = pickle.loads(socket.recv(1024))
             
-
+            if received_packet.magicno != "0x497E":
+                raise BaseException("Incorrect Magicno")
+            
+            if received_packet.type != "dataPacket":
+                raise BaseException("Incorrect Packet Type")
+            
+            if received_packet.seqno != expected:
+                packet = Packet("acknowledgementPacket", rcvd,seqno,0,[])
+                pickled = pickle.dumps(packet)
+                r_out.send(pickled)
+            elif received_packet.seqno == expected:
+                packet = Packet("acknowledgementPacket", rcvd,seqno,0,[])
+                pickled = pickle.dumps(packet)
+                r_out.send(pickled)
+                expected = 1 - expected
+                
+                if received_packet.dataLen > 0:
+                    "{}.txt".format(filename).write(received_packet.data)
+                elif received_packet.dataLen == 0:
+                    "{}.txt".format(filename).close()
+                    # Then close all sockets & Exit program
+                    r_in.close
+                    r_out.close
+                    finished = True
+                
 
 
 main()
