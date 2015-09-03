@@ -41,19 +41,20 @@ class Out_Receiver_Socket(Receiver_Socket):
         
 def main():
     
-    if len(argv) < 4:
-        argv = [6001,6002,5003,'test']
+    args = argv
+    if len(args) < 4:
+        args = [6001,6002,5003,'test']
     
-    if not ( len(argv) > len(set(argv)) ):
+    if  (len(args) > len(set(args)) ):
         raise BaseException("Overlapping Ports")
     
-    r_in = argv[0]
-    r_out = argv[1]
-    cr_in = argv[2]
-    filename = argv[3]
+    r_in = args[0]
+    r_out = args[1]
+    cr_in = args[2]
+    filename = args[3]
     
-    r_out = Out_Receiver_Socket(r_out_port, cr_in)
-    r_in = In_Receiver_Socket(r_in_port)
+    r_out = Out_Receiver_Socket(r_out, cr_in)
+    r_in = In_Receiver_Socket(r_in)
     
     for channel_socket in [r_out, r_in]: 
         channel_socket.setup()
@@ -70,6 +71,7 @@ def main():
         
         #wait for incoming packet
         if len(select([r_in],[],[])[0]) == 1:
+            r_in.accept
             received_packet = pickle.loads(socket.recv(1024))
             
             if received_packet.magicno != "0x497E":
