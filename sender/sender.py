@@ -48,6 +48,7 @@ def main():
     s_out = setup_socket(s_out_port)
 
     s_in.listen(5)
+    s_in.settimeout(1.0)
     
     s_out.connect((HOST, cs_in))
 
@@ -66,10 +67,10 @@ def main():
 
         while True:
             s_out.send(pickled)
-            responses = select([s_in],[],[],1.0)[0]
+            
+            conn, addr = s_in.accept()
 
-            if len(responses) == 1:
-                conn, addr = s_in.accept()
+            if conn:
                 resp_pickled = conn.recv(1024)
                 resp = pickle.loads(resp_pickled)
 

@@ -26,6 +26,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Packet.py" />
     <Compile Include="sender.py" />
   </ItemGroup>
   <ItemGroup>
