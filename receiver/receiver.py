@@ -87,11 +87,11 @@ def main():
             raise BaseException("Incorrect Packet Type")
             
         if received_packet.seqno != expected:
-            packet = Packet("acknowledgementPacket", rcvd,seqno,0,[])
+            packet = Packet("acknowledgementPacket", received_packet.seqno,0,[])
             pickled = pickle.dumps(packet)
             r_out.send(pickled)
         else:
-            packet = Packet("acknowledgementPacket", rcvd,seqno,0,[])
+            packet = Packet("acknowledgementPacket", received_packet.seqno,0,[])
             pickled = pickle.dumps(packet)
             r_out.send(pickled)
             expected = 1 - expected
