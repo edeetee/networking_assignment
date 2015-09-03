@@ -1,4 +1,4 @@
-from sys import argv
+﻿from sys import argv
 import socket
 from select import select
 from random import random
@@ -13,7 +13,6 @@ class Channel_Socket:
         self.port = int(port)
 
     def setup(self):
-
         self.socket = socket.socket()
         self.socket.bind((HOST, self.port))
 
@@ -31,28 +30,31 @@ class In_Channel_Socket(Channel_Socket):
 
 
 class Out_Channel_Socket(Channel_Socket):
+    first_time = True
     #definition for outgoing port
     def __init__(self, port, port_to):
         self.port_to = port_to
         super().__init__(port)
 
-    def setup(self):
-        super().setup()
-        self.socket.connect((HOST, self.port_to))
-
     def transfer(self, data):
+        if first_time:
+            self.socket.connect((HOST, self.port_to))
+
         self.socket.send(data)
 
 
 def main():
+
+    if len(argv) < 5:
+        argv = ["", 5001, 5002, 5003, 5004, 7001, 6001, 0]
 
     ports = argv[1:7]
 
     if len(ports) > len(set(ports)):
         raise BaseException("Overlapping Ports")
 
-    for port in ports:
-        port = int(port)
+    for i in range(len(ports)):
+        ports[i] = int(ports[i])
 
     cs_in_port, cs_out_port, cr_in_port, cr_out_port = ports[0:4]
     s_in, r_in = ports[4:6]

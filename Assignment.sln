@@ -11,6 +11,11 @@ Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "sender", "sender\sender.pyp
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "Packet", "Packet\Packet.pyproj", "{23B3AC06-FDD7-42BD-A6F9-C32831DB3DEA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7130C17C-A0C9-442D-8F5C-8C91C799BA22}"
+	ProjectSection(SolutionItems) = preProject
+		PORTS.txt = PORTS.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

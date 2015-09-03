@@ -12,6 +12,10 @@
     <OutputPath>.</OutputPath>
     <Name>sender</Name>
     <RootNamespace>sender</RootNamespace>
+    <LaunchProvider>Standard Python launcher</LaunchProvider>
+    <EnableNativeCodeDebugging>False</EnableNativeCodeDebugging>
+    <CommandLineArguments>
+    </CommandLineArguments>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,6 +27,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="sender.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="to_send.txt" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

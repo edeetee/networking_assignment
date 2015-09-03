@@ -1,0 +1,10 @@
+cs_in = 5001
+cs_out = 5002
+cr_in = 5003
+cr_out = 5004
+
+r_in = 6001
+r_out = 6002
+
+s_in = 7001
+s_out = 7002
