@@ -26,10 +26,12 @@ def make_packet(bytes, next):
 
 def main():
 
-    if len(argv) < 5:
-        argv = ["", 7001, 7002, 5001, "to_send.txt"]
+    args = argv
 
-    ports = argv[1:4]
+    if len(args) < 5:
+        args = ["", 7001, 7002, 5001, "to_send.txt"]
+
+    ports = args[1:4]
 
     if ( len(ports) > len(set(ports)) ):
         raise BaseException("Overlapping Ports")
@@ -40,18 +42,12 @@ def main():
     s_in_port, s_out_port = ports[0:2]
     cs_in = ports[2]
 
-    filename = argv[4]
+    filename = args[4]
 
     s_in = setup_socket(s_in_port)
     s_out = setup_socket(s_out_port)
 
-    #TESTTESTTEST
-
-    test_socket = socket.socket()
-    test_socket.bind((HOST, cs_in))
-    #test_socket.listen(5)
-
-    #TESTTESTTEST
+    s_in.listen(5)
     
     s_out.connect((HOST, cs_in))
 
@@ -73,7 +69,8 @@ def main():
             responses = select([s_in],[],[],1.0)[0]
 
             if len(responses) == 1:
-                resp_pickled = s_in.recv(1024)
+                conn, addr = s_in.accept()
+                resp_pickled = conn.recv(1024)
                 resp = pickle.loads(resp_pickled)
 
                 if (resp.magicno == 0x497E and 
@@ -82,6 +79,11 @@ def main():
                    resp.next == next):
                     next += 1
                     break
+                conn.close()
+
+    s_out.close()
+    file.close()
+    print(next)
 
 
 main()

@@ -3,6 +3,8 @@ import socket
 from select import select
 from random import random
 
+import pickle
+
 HOST = socket.gethostname()
 
 class Channel_Socket:
@@ -23,10 +25,16 @@ class In_Channel_Socket(Channel_Socket):
         self.socket_out = socket_out
         super().__init__(port)
 
+    def setup(self):
+        super().setup()
+        self.socket.listen(5)
+
     def transfer(self, P):
-        data = self.socket.recv(1024)
+        conn, addr = self.socket.accept()
+        data = conn.recv(1024)
         if(data and random() >= P):
             self.socket_out.transfer(data)
+        conn.close()
 
 
 class Out_Channel_Socket(Channel_Socket):
@@ -37,7 +45,7 @@ class Out_Channel_Socket(Channel_Socket):
         super().__init__(port)
 
     def transfer(self, data):
-        if first_time:
+        if self.first_time:
             self.socket.connect((HOST, self.port_to))
 
         self.socket.send(data)
@@ -45,10 +53,12 @@ class Out_Channel_Socket(Channel_Socket):
 
 def main():
 
-    if len(argv) < 5:
-        argv = ["", 5001, 5002, 5003, 5004, 7001, 6001, 0]
+    args = argv
 
-    ports = argv[1:7]
+    if len(args) < 5:
+        args = ["", 5001, 5002, 5003, 5004, 7001, 6001, 0]
+
+    ports = args[1:7]
 
     if len(ports) > len(set(ports)):
         raise BaseException("Overlapping Ports")
@@ -58,7 +68,7 @@ def main():
 
     cs_in_port, cs_out_port, cr_in_port, cr_out_port = ports[0:4]
     s_in, r_in = ports[4:6]
-    P = float(argv[7])
+    P = float(args[7])
     
     cs_out = Out_Channel_Socket(cs_out_port, s_in)
     cs_in = In_Channel_Socket(cs_in_port, cs_out)
@@ -71,8 +81,10 @@ def main():
     while True:
         print("Waiting...")
         read_sockets = select([cr_in.socket, cs_in.socket], [], [])[0]
-        cr_in.transfer(P)
-        cs_in.transfer(P)
+        print("Received {0}", read_sockets)
+        for in_sock in [cr_in, cs_in]:
+            if in_sock.socket in read_sockets:
+                in_sock.transfer(P)
 
 
 main()
